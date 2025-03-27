@@ -431,18 +431,51 @@ class AStarAgent(Agent):
 
     def manhattan_distance(self, matrix):
         """
-            Finds the locations of each player and returns the manhattan distance between two players calculated by |x1 - x2| + |y1 - y2|.
+            Finds the locations of each player and returns the Manhattan distance between two players calculated by h(x1, y1, x2, y2) = |x1 - x2| + |y1 - y2|.
 
             Args:
                 matrix (list): Initial game matrix (2x2)
 
             Returns:
-                int: Manhattan distance calculated between 2 players: |x1 - x2| + |y1 - y2|
+                int: Manhattan distance calculated between 2 players: h(x1, y1, x2, y2) = |x1 - x2| + |y1 - y2|
         """
-        # Manhattan distance is a good heuristic function for this environment
         try:
             p1_pos, p2_pos = self.find_players_positions(matrix)
             return abs(p1_pos[0] - p2_pos[0]) + abs(p1_pos[1] - p2_pos[1])
+        
+        except TypeError:
+            return 0
+        
+    def chebyshev_distance(self, matrix):
+        """
+            Finds the locations of each player and returns the Chebyshev distance between two players calculated by h(x1, y1, x2, y2) = max(|x1 - x2|, |y1 - y2|).
+
+            Args:
+                matrix (list): Initial game matrix (2x2)
+
+            Returns:
+                int: Chebyshev distance calculated between 2 players: h(x1, y1, x2, y2) = max(|x1 - x2|, |y1 - y2|)
+        """
+        try:
+            p1_pos, p2_pos = self.find_players_positions(matrix)
+            return max(abs(p1_pos[0] - p2_pos[0]), abs(p1_pos[1] - p2_pos[1]))
+        
+        except TypeError:
+            return 0
+        
+    def euclidean_distance(self, matrix):
+        """
+            Finds the locations of each player and returns the Euclidean distance between two players calculated by h(x1, y1, x2, y2) = sqrt((x1 - x2)^2 + (y1 - y2)^2).
+
+            Args:
+                matrix (list): Initial game matrix (2x2)
+
+            Returns:
+                float: Euclidean distance calculated between 2 players: h(x1, y1, x2, y2) = sqrt((x1 - x2)^2 + (y1 - y2)^2)
+        """
+        try:
+            p1_pos, p2_pos = self.find_players_positions(matrix)
+            return ((p1_pos[0] - p2_pos[0]) ** 2 + (p1_pos[1] - p2_pos[1]) ** 2) ** 0.5
         
         except TypeError:
             return 0
@@ -471,7 +504,7 @@ class AStarAgent(Agent):
         self.frontier = PriorityQueue()
 
         # Create a node from initial matrix and push into frontier with 0 initial cost and manhattan distance for heuristic cost
-        root = Node(None, self.initial_matrix, move_before=None, g_score=0, h_score=self.manhattan_distance(self.initial_matrix))
+        root = Node(None, self.initial_matrix, move_before=None, g_score=0, h_score=self.euclidean_distance(self.initial_matrix))
         self.frontier.push(root, root.f_score)
         self.generated_node += 1
         self.explored_node += 1
@@ -504,7 +537,7 @@ class AStarAgent(Agent):
 
                     # Create a node with this move and push to frontier with g(x) and h(x)
                     self.generated_node += 1
-                    front = Node(parent=node, matrix=new_matrix, move_before=move, g_score=node.g_score+1, h_score=self.manhattan_distance(new_matrix))
+                    front = Node(parent=node, matrix=new_matrix, move_before=move, g_score=node.g_score+1, h_score=self.euclidean_distance(new_matrix))
                     self.frontier.push(front, front.f_score)
                     self.explored_node += 1
 
@@ -536,7 +569,7 @@ class AStarAgent(Agent):
         self.explored = set()
 
         # Create a node from initial matrix and push into frontier with 0 initial cost and manhattan distance for heuristic cost
-        root = Node(None, self.initial_matrix, move_before=None, g_score=0, h_score=self.manhattan_distance(self.initial_matrix))
+        root = Node(None, self.initial_matrix, move_before=None, g_score=0, h_score=self.euclidean_distance(self.initial_matrix))
         self.frontier.push(root, root.f_score)
         self.explored.add(matrix_to_tuple(root.matrix))
         self.generated_node += 1
@@ -570,7 +603,7 @@ class AStarAgent(Agent):
 
                     # Create a node with this move and push to frontier with g(x) and h(x) and add the matrix to explored set
                     self.generated_node += 1
-                    front = Node(parent=node, matrix=new_matrix, move_before=move, g_score=node.g_score+1, h_score=self.manhattan_distance(new_matrix))
+                    front = Node(parent=node, matrix=new_matrix, move_before=move, g_score=node.g_score+1, h_score=self.euclidean_distance(new_matrix))
                     self.frontier.push(front, front.f_score)
                     self.explored.add(new_matrix_tuple)
                     self.explored_node += 1
