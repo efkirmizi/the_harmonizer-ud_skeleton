@@ -161,7 +161,6 @@ class BFSAgent(Agent):
         root = Node(None, self.initial_matrix, move_before=None)
         self.frontier.append(root)
         self.generated_node += 1
-        self.explored_node += 1
 
         self.maximum_node_in_memory = len(self.frontier)
 
@@ -169,6 +168,7 @@ class BFSAgent(Agent):
             # Pop a node from frontier
             node = self.frontier[0]
             self.frontier = self.frontier[1:] # Remove popped node from the list
+            self.explored_node += 1
 
             # If time exceeded the limit to find a solution return the moves of the current node
             if time.time() - started_at > limit:
@@ -184,18 +184,18 @@ class BFSAgent(Agent):
             
             for move in self.actions: # Iterate over defined moves for state transitions (DOWN, LEFT, UP, RIGHT)
                 if check_moves(move[0], move[1], node.matrix, p1, p2): # If move is valid:
-                    self.total_move += 1
                     new_matrix = move_players(move[0], move[1], node.matrix, p1, p2, layout) # Proceed to move and create changed matrix
                     
                     # If move is valid but the matrix is same with previous matrix skip this iteration
                     if self.check_equal(node.matrix, new_matrix):
                         continue
 
+                    self.total_move += 1
+
                     # Create a node with this move and push to frontier
                     self.generated_node += 1
                     front = Node(node, new_matrix, move)
                     self.frontier.append(front)
-                    self.explored_node += 1
 
                     self.maximum_node_in_memory = max(self.maximum_node_in_memory, len(self.frontier))
 
@@ -229,7 +229,6 @@ class BFSAgent(Agent):
         self.frontier.append(root)
         self.explored.add(matrix_to_tuple(self.initial_matrix))
         self.generated_node += 1
-        self.explored_node += 1
 
         self.maximum_node_in_memory = len(self.frontier) + len(self.explored)
 
@@ -237,6 +236,7 @@ class BFSAgent(Agent):
             # Pop a node from frontier
             node = self.frontier[0]
             self.frontier = self.frontier[1:] # Remove popped node from the list
+            self.explored_node += 1
             
             # Check if the current node is winning condition, if so return the moves 
             if check_win(node.matrix):
@@ -247,12 +247,13 @@ class BFSAgent(Agent):
             
             for move in self.actions: # Iterate over defined moves for state transitions (DOWN, LEFT, UP, RIGHT)
                 if check_moves(move[0], move[1], node.matrix, p1, p2): # If move is valid:
-                    self.total_move += 1
                     new_matrix = move_players(move[0], move[1], node.matrix, p1, p2, layout) # Proceed to move and create changed matrix
 
                     # If move is valid but the matrix is same with previous matrix skip this iteration
                     if self.check_equal(node.matrix, new_matrix):
                         continue
+
+                    self.total_move += 1
 
                     # Create a matrix with set(set) structure and search it in explored set
                     new_matrix_tuple = matrix_to_tuple(new_matrix)
@@ -264,7 +265,6 @@ class BFSAgent(Agent):
                     front = Node(node, new_matrix, move)
                     self.frontier.append(front)
                     self.explored.add(new_matrix_tuple)
-                    self.explored_node += 1
 
                     self.maximum_node_in_memory = max(self.maximum_node_in_memory, len(self.frontier) + len(self.explored))
 
@@ -308,7 +308,6 @@ class DFSAgent(Agent):
         root = Node(None, self.initial_matrix, move_before=None)
         self.frontier.append(root)
         self.generated_node += 1
-        self.explored_node += 1
 
         self.maximum_node_in_memory = len(self.frontier)
 
@@ -316,6 +315,7 @@ class DFSAgent(Agent):
             # Pop a node from frontier
             node = self.frontier[-1]
             self.frontier = self.frontier[:-1] # Remove popped node from the list
+            self.explored_node += 1
 
             # If time exceeded the limit to find a solution return the moves of the current node
             if time.time() - started_at > limit:
@@ -331,19 +331,18 @@ class DFSAgent(Agent):
             
             for move in self.actions: # Iterate over defined moves for state transitions (DOWN, LEFT, UP, RIGHT)
                 if check_moves(move[0], move[1], node.matrix, p1, p2): # If move is valid:
-                    self.total_move += 1
                     new_matrix = move_players(move[0], move[1], node.matrix, p1, p2, layout) # Proceed to move and create changed matrix
 
                     # If move is valid but the matrix is same with previous matrix skip this iteration
                     if self.check_equal(node.matrix, new_matrix):
                         continue
 
+                    self.total_move += 1
+
                     # Create a node with this move and push to frontier
                     self.generated_node += 1
                     front = Node(node, new_matrix, move)
                     self.frontier.append(front)
-                    self.explored_node += 1
-                    self.total_move += 1
 
                     self.maximum_node_in_memory = max(self.maximum_node_in_memory, len(self.frontier))
 
@@ -377,7 +376,6 @@ class DFSAgent(Agent):
         self.frontier.append(root)
         self.explored.add(matrix_to_tuple(root.matrix))
         self.generated_node += 1
-        self.explored_node += 1
 
         self.maximum_node_in_memory = len(self.frontier) + len(self.explored)
 
@@ -385,6 +383,7 @@ class DFSAgent(Agent):
             # Pop a node from frontier
             node = self.frontier[-1]
             self.frontier = self.frontier[:-1] # Remove popped node from the list
+            self.explored_node += 1
             
             # Check if the current node is winning condition, if so return the moves 
             if check_win(node.matrix):
@@ -395,12 +394,13 @@ class DFSAgent(Agent):
             
             for move in self.actions: # Iterate over defined moves for state transitions (DOWN, LEFT, UP, RIGHT)
                 if check_moves(move[0], move[1], node.matrix, p1, p2): # If move is valid:
-                    self.total_move += 1
                     new_matrix = move_players(move[0], move[1], node.matrix, p1, p2, layout) # Proceed to move and create changed matrix
 
                     # If move is valid but the matrix is same with previous matrix skip this iteration
                     if self.check_equal(node.matrix, new_matrix):
                         continue
+
+                    self.total_move += 1
 
                     # Create a matrix with set(set) structure and search it in explored set
                     new_matrix_tuple = matrix_to_tuple(new_matrix)
@@ -412,7 +412,6 @@ class DFSAgent(Agent):
                     front = Node(node, new_matrix, move)
                     self.frontier.append(front)
                     self.explored.add(new_matrix_tuple)
-                    self.explored_node += 1
 
                     self.maximum_node_in_memory = max(self.maximum_node_in_memory, len(self.frontier) + len(self.explored))
 
@@ -507,12 +506,12 @@ class AStarAgent(Agent):
         root = Node(None, self.initial_matrix, move_before=None, g_score=0, h_score=self.euclidean_distance(self.initial_matrix))
         self.frontier.push(root, root.f_score)
         self.generated_node += 1
-        self.explored_node += 1
 
         self.maximum_node_in_memory = self.frontier.size()
 
         while self.frontier.size(): # While frontiner is not empty
             node = self.frontier.pop() # Pop node with lowest cost state from the frontier
+            self.explored_node += 1
             
             # If time exceeded the limit to find a solution return the moves of the current node
             if time.time() - started_at > limit:
@@ -528,18 +527,18 @@ class AStarAgent(Agent):
             
             for move in self.actions: # Iterate over defined moves for state transitions (DOWN, LEFT, UP, RIGHT)
                 if check_moves(move[0], move[1], node.matrix, p1, p2): # If move is valid:
-                    self.total_move += 1
                     new_matrix = move_players(move[0], move[1], node.matrix, p1, p2, layout) # Proceed to move and create changed matrix
                     
                     # If move is valid but the matrix is same with previous matrix skip this iteration
                     if self.check_equal(node.matrix, new_matrix):
                         continue
 
+                    self.total_move += 1
+
                     # Create a node with this move and push to frontier with g(x) and h(x)
                     self.generated_node += 1
                     front = Node(parent=node, matrix=new_matrix, move_before=move, g_score=node.g_score+1, h_score=self.euclidean_distance(new_matrix))
                     self.frontier.push(front, front.f_score)
-                    self.explored_node += 1
 
                     self.maximum_node_in_memory = max(self.maximum_node_in_memory, self.frontier.size())
 
@@ -573,13 +572,13 @@ class AStarAgent(Agent):
         self.frontier.push(root, root.f_score)
         self.explored.add(matrix_to_tuple(root.matrix))
         self.generated_node += 1
-        self.explored_node += 1
 
         self.maximum_node_in_memory = self.frontier.size() + len(self.explored)
 
         while self.frontier.size(): # While frontiner is not empty
             node = self.frontier.pop() # Pop node with lowest cost state from the frontier
-            
+            self.explored_node += 1
+
             # Check if the current node is winning condition, if so return the moves 
             if check_win(node.matrix):
                 return self.get_moves(node)
@@ -589,12 +588,13 @@ class AStarAgent(Agent):
 
             for move in self.actions: # Iterate over defined moves for state transitions (DOWN, LEFT, UP, RIGHT)
                 if check_moves(move[0], move[1], node.matrix, p1, p2):
-                    self.total_move += 1
                     new_matrix = move_players(move[0], move[1], node.matrix, p1, p2, layout) # Proceed to move and create changed matrix
 
                     # If move is valid but the matrix is same with previous matrix skip this iteration
                     if self.check_equal(node.matrix, new_matrix):
                         continue
+
+                    self.total_move += 1
 
                     # Create a matrix with set(set) structure and search it in explored set
                     new_matrix_tuple = matrix_to_tuple(new_matrix)
@@ -606,7 +606,6 @@ class AStarAgent(Agent):
                     front = Node(parent=node, matrix=new_matrix, move_before=move, g_score=node.g_score+1, h_score=self.euclidean_distance(new_matrix))
                     self.frontier.push(front, front.f_score)
                     self.explored.add(new_matrix_tuple)
-                    self.explored_node += 1
 
                     self.maximum_node_in_memory = max(self.maximum_node_in_memory, self.frontier.size() + len(self.explored))
         
