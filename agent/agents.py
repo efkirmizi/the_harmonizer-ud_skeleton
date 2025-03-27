@@ -4,6 +4,7 @@
 import time
 import numpy as np
 from agent.agent import *
+from collections import deque
 
 ########################################################
 ######## YOUR CAN ADD ADDITIONAL FUNCTIONS HERE ########
@@ -154,8 +155,8 @@ class BFSAgent(Agent):
         layout[p1_pos[0]][p1_pos[1]] = 0
         layout[p2_pos[0]][p2_pos[1]] = 0
 
-        # Will use a list like a FIFO queue
-        self.frontier = []
+        # Will use a deque like a FIFO queue
+        self.frontier = deque()
 
         # Create a node from initial matrix and push into frontier
         root = Node(None, self.initial_matrix, move_before=None)
@@ -164,10 +165,9 @@ class BFSAgent(Agent):
 
         self.maximum_node_in_memory = len(self.frontier)
 
-        while self.frontier: # While frontiner is not empty
+        while len(self.frontier): # While frontiner is not empty
             # Pop a node from frontier
-            node = self.frontier[0]
-            self.frontier = self.frontier[1:] # Remove popped node from the list
+            node = self.frontier.popleft()
             self.explored_node += 1
 
             # If time exceeded the limit to find a solution return the moves of the current node
@@ -218,8 +218,8 @@ class BFSAgent(Agent):
         layout[p1_pos[0]][p1_pos[1]] = 0
         layout[p2_pos[0]][p2_pos[1]] = 0
 
-        # Will use a list like a FIFO queue
-        self.frontier = []
+        # Will use a deque like a FIFO queue
+        self.frontier = deque()
 
         # A set to keep track of matrices of seen states
         self.explored = set()
@@ -232,10 +232,9 @@ class BFSAgent(Agent):
 
         self.maximum_node_in_memory = len(self.frontier) + len(self.explored)
 
-        while self.frontier: # While frontiner is not empty
+        while len(self.frontier): # While frontiner is not empty
             # Pop a node from frontier
-            node = self.frontier[0]
-            self.frontier = self.frontier[1:] # Remove popped node from the list
+            node = self.frontier.popleft()
             self.explored_node += 1
             
             # Check if the current node is winning condition, if so return the moves 
@@ -301,8 +300,8 @@ class DFSAgent(Agent):
         layout[p1_pos[0]][p1_pos[1]] = 0
         layout[p2_pos[0]][p2_pos[1]] = 0
 
-        # Will use a list like a LIFO queue (stack)
-        self.frontier = []
+        # Will use a deque like a LIFO queue (stack)
+        self.frontier = deque()
 
         # Create a node from initial matrix and push into frontier
         root = Node(None, self.initial_matrix, move_before=None)
@@ -311,10 +310,9 @@ class DFSAgent(Agent):
 
         self.maximum_node_in_memory = len(self.frontier)
 
-        while self.frontier: # While frontiner is not empty
+        while len(self.frontier): # While frontiner is not empty
             # Pop a node from frontier
-            node = self.frontier[-1]
-            self.frontier = self.frontier[:-1] # Remove popped node from the list
+            node = self.frontier.pop()
             self.explored_node += 1
 
             # If time exceeded the limit to find a solution return the moves of the current node
@@ -365,8 +363,8 @@ class DFSAgent(Agent):
         layout[p1_pos[0]][p1_pos[1]] = 0
         layout[p2_pos[0]][p2_pos[1]] = 0
 
-        # Will use a list like a LIFO queue (stack)
-        self.frontier = []
+        # Will use a deque like a LIFO queue (stack)
+        self.frontier = deque()
 
         # A set to keep track of matrices of seen states
         self.explored = set()
@@ -379,10 +377,9 @@ class DFSAgent(Agent):
 
         self.maximum_node_in_memory = len(self.frontier) + len(self.explored)
 
-        while self.frontier: # While frontiner is not empty
+        while len(self.frontier): # While frontiner is not empty
             # Pop a node from frontier
-            node = self.frontier[-1]
-            self.frontier = self.frontier[:-1] # Remove popped node from the list
+            node = self.frontier.pop()
             self.explored_node += 1
             
             # Check if the current node is winning condition, if so return the moves 
